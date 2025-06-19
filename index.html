@@ -3,421 +3,775 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Wikipedia Summarizer</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <meta name="description" content="Get intelligent and concise summaries of Wikipedia articles using AI.">
-    <meta name="keywords" content="AI, Wikipedia, Summarizer, Machine Learning, NLP, Article Summary">
-    <meta name="author" content="Your Name or Company Name">
-    <meta property="og:title" content="AI Wikipedia Summarizer">
-    <meta property="og:description" content="Get intelligent and concise summaries of Wikipedia articles using AI.">
+    <title>AI Wikipedia Summarizer - Intelligent Article Summaries</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Transform lengthy Wikipedia articles into concise, intelligent summaries using advanced AI. Get the key insights in seconds.">
+    <meta name="keywords" content="AI, Wikipedia, Summarizer, Machine Learning, NLP, Article Summary, Artificial Intelligence">
+    <meta name="author" content="AI Tools">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="AI Wikipedia Summarizer - Intelligent Article Summaries">
+    <meta property="og:description" content="Transform lengthy Wikipedia articles into concise, intelligent summaries using advanced AI.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.yourwebsite.com/">
-    <meta property="og:image" content="https://www.yourwebsite.com/social-share.jpg">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #f0f2f5;
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            overflow: hidden;
-            border: 1px solid #e0e0e0;
-        }
-
-        .header {
-            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .header p {
-            font-size: 1rem;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-
-        .main {
-            padding: 35px;
-        }
-
-        .input-group {
-            margin-bottom: 25px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 0.95rem;
-        }
-
-        input[type="url"] {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #dcdcdc;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            background-color: #fcfcfc;
-        }
-
-        input[type="url"]:focus {
-            outline: none;
-            border-color: #4CAF50;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
-        }
-
-        .btn {
-            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            font-size: 15px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            width: 100%;
-            margin-bottom: 18px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #555;
-        }
-
-        .spinner {
-            border: 3px solid #e0e0e0;
-            border-top: 3px solid #4CAF50;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .result {
-            display: none;
-            background: #f9fafb;
-            border-radius: 8px;
-            padding: 25px;
-            margin-top: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border: 1px solid #eee;
-        }
-
-        .result h3 {
-            color: #333;
-            margin-bottom: 12px;
-            font-size: 1.3rem;
-        }
-
-        .summary {
-            line-height: 1.7;
-            color: #555;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
-
-        .copy-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.2s;
-        }
-
-        .copy-btn:hover {
-            background: #218838;
-        }
-
-        .toast {
-            visibility: hidden;
-            min-width: 250px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 16px;
-            position: fixed;
-            z-index: 1;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 17px;
-            white-space: nowrap;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .toast.show {
-            visibility: visible;
-            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
-            animation: fadein 0.5s, fadeout 0.5s 2.5s;
-        }
-
-        @-webkit-keyframes fadein {
-            from {bottom: 0; opacity: 0;} 
-            to {bottom: 30px; opacity: 1;}
-        }
-
-        @keyframes fadein {
-            from {bottom: 0; opacity: 0;}
-            to {bottom: 30px; opacity: 1;}
-        }
-
-        @-webkit-keyframes fadeout {
-            from {bottom: 30px; opacity: 1;} 
-            to {bottom: 0; opacity: 0;}
-        }
-
-        @keyframes fadeout {
-            from {bottom: 30px; opacity: 1;}
-            to {bottom: 0; opacity: 0;}
-        }
-
-        .error {
-            display: none;
-            background: #ffebee;
-            border: 1px solid #ef9a9a;
-            color: #d32f2f;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            font-size: 0.95rem;
-        }
-
-        .example {
-            background: #e3f2fd;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #424242;
-            margin-top: 10px;
-            border: 1px solid #bbdefb;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-                border-radius: 8px;
-            }
-
-            .header {
-                padding: 25px;
-            }
-
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .header p {
-                font-size: 0.9rem;
-            }
-
-            .main {
-                padding: 20px;
-            }
-
-            .btn {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            input[type="url"] {
-                padding: 12px;
-                font-size: 14px;
-            }
-
-            .result h3 {
-                font-size: 1.1rem;
-            }
-
-            .summary {
-                font-size: 0.88rem;
-            }
-
-            .copy-btn {
-                padding: 8px 15px;
-                font-size: 12px;
-            }
-
-            .toast {
-                min-width: unset;
-                width: 90%;
-                left: 5%;
-                transform: translateX(0);
-                font-size: 14px;
-            }
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <meta property="og:image" content="/og-image.jpg">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="AI Wikipedia Summarizer">
+    <meta name="twitter:description" content="Transform lengthy Wikipedia articles into concise, intelligent summaries using advanced AI.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🤖 AI Wikipedia Summarizer</h1>
-            <p>Get intelligent summaries of Wikipedia articles in seconds</p>
-        </div>
+        <header class="header">
+            <div class="header-icon">🤖</div>
+            <h1>AI Wikipedia Summarizer</h1>
+            <p>Transform lengthy Wikipedia articles into concise, intelligent summaries using advanced AI technology</p>
+        </header>
 
-        <div class="main">
-            <form id="summarizerForm">
-                <div class="input-group">
-                    <label for="wikipediaUrl">Wikipedia Article URL</label>
-                    <input 
-                        type="url" 
-                        id="wikipediaUrl" 
-                        placeholder="https://en.wikipedia.org/wiki/Artificial_intelligence"
-                        required
-                    >
-                    <div class="example">
-                        Example: https://en.wikipedia.org/wiki/Machine_learning
+        <main class="main-card">
+            <div class="card-header">
+                <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--gray-800);">Create Summary</h2>
+            </div>
+            
+            <div class="card-body">
+                <form id="summarizerForm">
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-md); margin-bottom: var(--spacing-sm);">
+                            <label class="form-label" style="margin-bottom: 0;">Wikipedia Articles</label>
+                            <div class="input-mode-toggle">
+                                <button type="button" class="mode-btn active" data-mode="single">Single Article</button>
+                                <button type="button" class="mode-btn" data-mode="multiple">Multiple Articles</button>
+                            </div>
+                        </div>
+                        
+                        <div id="singleUrlMode" class="url-input-mode">
+                            <input 
+                                type="url" 
+                                id="wikipediaUrl" 
+                                class="form-input"
+                                placeholder="https://en.wikipedia.org/wiki/Artificial_intelligence"
+                                autocomplete="url"
+                            >
+                            <div id="urlValidation" class="input-validation"></div>
+                        </div>
+                        
+                        <div id="multipleUrlMode" class="url-input-mode" style="display: none;">
+                            <div id="urlInputs">
+                                <div class="url-input-row">
+                                    <input 
+                                        type="url" 
+                                        class="form-input url-input-multi"
+                                        placeholder="https://en.wikipedia.org/wiki/Article_1"
+                                        autocomplete="url"
+                                    >
+                                    <button type="button" class="btn-remove-url" disabled>×</button>
+                                </div>
+                            </div>
+                            <button type="button" id="addUrlBtn" class="btn btn-secondary btn-add-url">
+                                ➕ Add Another Article
+                            </button>
+                            <div id="multiUrlValidation" class="multi-url-validation"></div>
+                        </div>
+                        
+                        <div class="form-help">
+                            <strong>Single Mode:</strong> Summarize one Wikipedia article<br>
+                            <strong>Multiple Mode:</strong> Combine and summarize multiple articles on related topics<br>
+                            <strong>Example:</strong> https://en.wikipedia.org/wiki/Machine_learning
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Summary Length</label>
+                        <div class="summary-options">
+                            <div class="option-card selected" data-length="short">
+                                <h4>Short</h4>
+                                <p>50-100 words</p>
+                            </div>
+                            <div class="option-card" data-length="medium">
+                                <h4>Medium</h4>
+                                <p>100-200 words</p>
+                            </div>
+                            <div class="option-card" data-length="long">
+                                <h4>Long</h4>
+                                <p>200-300 words</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                        <span id="submitText">Generate Summary</span>
+                    </button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="progress-steps">
+                        <div class="progress-step">
+                            <div class="step-circle" id="step1">1</div>
+                            <div class="step-text">Fetching Articles</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" id="step2">2</div>
+                            <div class="step-text">Processing Content</div>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-circle" id="step3">3</div>
+                            <div class="step-text">Generating Summary</div>
+                        </div>
+                    </div>
+                    
+                    <div id="articleProgress" class="article-progress" style="display: none;">
+                        <div class="progress-header">
+                            <h4>Processing Articles</h4>
+                            <span id="progressCounter">0/0</span>
+                        </div>
+                        <div id="articleList" class="article-list"></div>
+                    </div>
+                    
+                    <div class="spinner"></div>
+                    <p id="loadingText">Analyzing Wikipedia articles...</p>
+                </div>
+
+                <div class="result" id="result">
+                    <div class="result-header">
+                        <h3 class="result-title">📝 Article Summary</h3>
+                        <div class="result-meta">
+                            <span id="wordCount"></span>
+                            <span id="readingTime"></span>
+                        </div>
+                    </div>
+                    <div class="summary-content" id="summaryText"></div>
+                    <div class="result-actions">
+                        <button class="btn btn-primary" id="copyBtn">
+                            📋 Copy Summary
+                        </button>
+                        <button class="btn btn-secondary" id="saveBtn">
+                            💾 Save to History
+                        </button>
+                        <button class="btn btn-secondary" id="shareBtn">
+                            🔗 Share
+                        </button>
                     </div>
                 </div>
 
-                <button type="submit" class="btn" id="submitBtn">
-                    Summarize Article
-                </button>
-            </form>
-
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>Analyzing Wikipedia article and generating summary...</p>
+                <div class="error" id="error">
+                    <div class="error-title">❌ Something went wrong</div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
             </div>
+        </main>
 
-            <div class="result" id="result">
-                <h3>📝 Summary</h3>
-                <div class="summary" id="summaryText"></div>
-                <button class="copy-btn" id="copyBtn">Copy Summary</button>
+        <section class="history" id="historySection">
+            <div class="main-card">
+                <div class="card-header">
+                    <div class="history-header">
+                        <h3 class="history-title">📚 Recent Summaries</h3>
+                        <span class="history-clear" id="clearHistory">Clear All</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="historyList"></div>
+                </div>
             </div>
-
-            <div class="error" id="error">
-                <strong>Error:</strong> <span id="errorMessage"></span>
-            </div>
-        </div>
+        </section>
     </div>
 
-    <div id="toast" class="toast" aria-live="polite">Summary copied to clipboard!</div>
+    <div id="toast" class="toast">Summary copied to clipboard!</div>
 
     <script>
+        // State management
+        let currentSummaryLength = 'short';
+        let summaryHistory = JSON.parse(localStorage.getItem('summaryHistory') || '[]');
+        let currentMode = 'single';
+        let urlCount = 1;
+
+        // DOM Elements
         const form = document.getElementById('summarizerForm');
+        const urlInput = document.getElementById('wikipediaUrl');
+        const urlValidation = document.getElementById('urlValidation');
+        const summaryOptions = document.querySelectorAll('.option-card');
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
         const loading = document.getElementById('loading');
+        const loadingText = document.getElementById('loadingText');
         const result = document.getElementById('result');
         const error = document.getElementById('error');
         const summaryText = document.getElementById('summaryText');
-        const submitBtn = document.getElementById('submitBtn');
+        const wordCount = document.getElementById('wordCount');
+        const readingTime = document.getElementById('readingTime');
         const copyBtn = document.getElementById('copyBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        const shareBtn = document.getElementById('shareBtn');
         const toast = document.getElementById('toast');
+        const historySection = document.getElementById('historySection');
+        const historyList = document.getElementById('historyList');
+        const clearHistory = document.getElementById('clearHistory');
+        
+        // Multi-URL elements
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const singleUrlMode = document.getElementById('singleUrlMode');
+        const multipleUrlMode = document.getElementById('multipleUrlMode');
+        const urlInputs = document.getElementById('urlInputs');
+        const addUrlBtn = document.getElementById('addUrlBtn');
+        const multiUrlValidation = document.getElementById('multiUrlValidation');
+        const articleProgress = document.getElementById('articleProgress');
+        const progressCounter = document.getElementById('progressCounter');
+        const articleList = document.getElementById('articleList');
 
-        form.addEventListener('submit', async (e) => {
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHistoryDisplay();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Mode switching
+            modeButtons.forEach(btn => {
+                btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+            });
+
+            // URL validation
+            urlInput.addEventListener('input', validateUrl);
+            urlInput.addEventListener('paste', (e) => {
+                setTimeout(validateUrl, 100);
+            });
+
+            // Multiple URL management
+            addUrlBtn.addEventListener('click', addUrlInput);
+            
+            // Add event listener for initial remove button
+            const initialRemoveBtn = document.querySelector('.btn-remove-url');
+            if (initialRemoveBtn) {
+                initialRemoveBtn.addEventListener('click', () => removeUrlInput(initialRemoveBtn));
+            }
+            
+            // Add event listeners for multiple URL inputs
+            document.querySelectorAll('.url-input-multi').forEach(input => {
+                input.addEventListener('input', validateMultipleUrls);
+                input.addEventListener('paste', () => setTimeout(validateMultipleUrls, 100));
+            });
+            
+            // Summary length selection
+            summaryOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    summaryOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                    currentSummaryLength = option.dataset.length;
+                });
+            });
+
+            // Form submission
+            form.addEventListener('submit', handleSubmit);
+
+            // Button actions
+            copyBtn.addEventListener('click', copySummary);
+            saveBtn.addEventListener('click', saveToHistory);
+            shareBtn.addEventListener('click', shareSummary);
+            clearHistory.addEventListener('click', clearAllHistory);
+        }
+
+        function validateUrl() {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                urlValidation.innerHTML = '';
+                urlInput.classList.remove('valid', 'invalid');
+                return;
+            }
+
+            if (isValidWikipediaUrl(url)) {
+                urlValidation.innerHTML = '<span>✓ Valid Wikipedia URL</span>';
+                urlValidation.className = 'input-validation valid';
+                urlInput.classList.remove('invalid');
+                urlInput.classList.add('valid');
+            } else {
+                urlValidation.innerHTML = '<span>⚠️ Please enter a valid Wikipedia article URL</span>';
+                urlValidation.className = 'input-validation invalid';
+                urlInput.classList.remove('valid');
+                urlInput.classList.add('invalid');
+            }
+        }
+
+        function isValidWikipediaUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.hostname.includes('wikipedia.org') && urlObj.pathname.includes('/wiki/');
+            } catch {
+                return false;
+            }
+        }
+
+        async function handleSubmit(e) {
             e.preventDefault();
             
-            const url = document.getElementById('wikipediaUrl').value;
+            const urls = getUrlsFromInputs();
             
-            // Validate Wikipedia URL
-            if (!url.includes('wikipedia.org/wiki/')) {
-                showError('Please enter a valid Wikipedia article URL');
+            if (urls.length === 0) {
+                showError('Please enter at least one valid Wikipedia article URL');
                 return;
             }
 
             // Show loading state
-            loading.style.display = 'block';
-            result.style.display = 'none';
-            error.style.display = 'none';
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Processing...';
+            showLoading();
+            hideError();
+            hideResult();
 
             try {
-                const response = await fetch('/api/summarize', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ url })
-                });
-
-                const data = await response.json();
+                let response, data;
+                
+                if (urls.length === 1) {
+                    // Single URL processing
+                    await simulateProgress();
+                    
+                    response = await fetch('/api/summarize', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            url: urls[0],
+                            length: currentSummaryLength 
+                        })
+                    });
+                    
+                    data = await response.json();
+                } else {
+                    // Multiple URLs processing
+                    await simulateMultiProgress(urls);
+                    
+                    response = await fetch('/api/summarize-multiple', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            urls: urls,
+                            length: currentSummaryLength 
+                        })
+                    });
+                    
+                    data = await response.json();
+                }
 
                 if (!response.ok) {
                     throw new Error(data.error || 'Failed to generate summary');
                 }
 
                 // Show result
-                summaryText.textContent = data.summary;
-                result.style.display = 'block';
-                loading.style.display = 'none';
+                if (urls.length === 1) {
+                    displaySummary(data.summary, data.title, urls[0]);
+                } else {
+                    displayMultipleSummary(data.summary, data.titles, urls, data.successCount, data.totalCount);
+                }
+                hideLoading();
 
             } catch (err) {
                 showError(err.message);
-                loading.style.display = 'none';
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Summarize Article';
+                hideLoading();
             }
-        });
+        }
 
-        copyBtn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(summaryText.textContent);
-                toast.className = 'toast show';
-                setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 3000);
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
+        async function simulateProgress() {
+            const steps = [
+                { id: 'step1', text: 'Fetching Wikipedia article...' },
+                { id: 'step2', text: 'Processing article content...' },
+                { id: 'step3', text: 'Generating AI summary...' }
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                const stepElement = document.getElementById(step.id);
+                
+                stepElement.classList.add('active');
+                loadingText.textContent = step.text;
+                
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                stepElement.classList.remove('active');
+                stepElement.classList.add('completed');
             }
-        });
+        }
+
+        async function simulateMultiProgress(urls) {
+            // Show article progress section
+            articleProgress.style.display = 'block';
+            progressCounter.textContent = `0/${urls.length}`;
+            
+            // Create progress items for each URL
+            articleList.innerHTML = urls.map((url, index) => {
+                const title = extractTitleFromUrl(url);
+                return `
+                    <div class="article-progress-item" id="article-${index}">
+                        <div class="article-status-icon pending" id="icon-${index}">⏳</div>
+                        <div class="article-title">${title}</div>
+                        <div class="article-status-text" id="status-${index}">Pending</div>
+                    </div>
+                `;
+            }).join('');
+
+            const steps = [
+                { id: 'step1', text: 'Fetching Wikipedia articles...' },
+                { id: 'step2', text: 'Processing combined content...' },
+                { id: 'step3', text: 'Generating unified summary...' }
+            ];
+
+            // Step 1: Simulate fetching articles
+            document.getElementById('step1').classList.add('active');
+            loadingText.textContent = steps[0].text;
+            
+            for (let i = 0; i < urls.length; i++) {
+                const iconEl = document.getElementById(`icon-${i}`);
+                const statusEl = document.getElementById(`status-${i}`);
+                
+                iconEl.className = 'article-status-icon processing';
+                iconEl.textContent = '⚡';
+                statusEl.textContent = 'Fetching...';
+                
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                iconEl.className = 'article-status-icon completed';
+                iconEl.textContent = '✓';
+                statusEl.textContent = 'Completed';
+                
+                progressCounter.textContent = `${i + 1}/${urls.length}`;
+            }
+            
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step1').classList.add('completed');
+
+            // Step 2: Processing
+            document.getElementById('step2').classList.add('active');
+            loadingText.textContent = steps[1].text;
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step2').classList.add('completed');
+
+            // Step 3: Generating summary
+            document.getElementById('step3').classList.add('active');
+            loadingText.textContent = steps[2].text;
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('step3').classList.add('completed');
+        }
+
+        function extractTitleFromUrl(url) {
+            try {
+                const urlParts = url.split('/wiki/');
+                if (urlParts.length > 1) {
+                    return decodeURIComponent(urlParts[1].replace(/_/g, ' '));
+                }
+                return 'Wikipedia Article';
+            } catch {
+                return 'Wikipedia Article';
+            }
+        }
+
+        function displayMultipleSummary(summary, titles, urls, successCount, totalCount) {
+            summaryText.textContent = summary;
+            
+            // Calculate word count and reading time
+            const words = summary.split(/\s+/).length;
+            const readingTimeMin = Math.ceil(words / 200);
+            
+            wordCount.textContent = `${words} words`;
+            readingTime.textContent = `~${readingTimeMin} min read`;
+            
+            // Update result title for multiple articles
+            document.querySelector('.result-title').innerHTML = 
+                `📚 Combined Summary of ${successCount} Articles`;
+            
+            // Add source information
+            if (successCount < totalCount) {
+                const warning = document.createElement('div');
+                warning.style.cssText = `
+                    background: var(--warning-50);
+                    border: 1px solid var(--warning-200);
+                    border-radius: var(--radius-md);
+                    padding: var(--spacing-md);
+                    margin-bottom: var(--spacing-lg);
+                    color: var(--warning-700);
+                    font-size: 0.875rem;
+                `;
+                warning.innerHTML = `
+                    <strong>⚠️ Partial Success:</strong> Successfully processed ${successCount} out of ${totalCount} articles. 
+                    Some articles may have been skipped due to access issues.
+                `;
+                document.querySelector('.summary-content').parentNode.insertBefore(
+                    warning, 
+                    document.querySelector('.summary-content')
+                );
+            }
+            
+            // Store current summary data with multiple URLs
+            window.currentSummary = { 
+                summary, 
+                title: `Combined Summary (${titles.join(', ')})`, 
+                urls: urls, 
+                timestamp: Date.now(),
+                isMultiple: true
+            };
+            
+            showResult();
+        }
+
+        function displaySummary(summary, title, url) {
+            summaryText.textContent = summary;
+            
+            // Calculate word count and reading time
+            const words = summary.split(/\s+/).length;
+            const readingTimeMin = Math.ceil(words / 200);
+            
+            wordCount.textContent = `${words} words`;
+            readingTime.textContent = `~${readingTimeMin} min read`;
+            
+            // Store current summary data
+            window.currentSummary = { summary, title, url, timestamp: Date.now() };
+            
+            showResult();
+        }
+
+        function copySummary() {
+            navigator.clipboard.writeText(summaryText.textContent).then(() => {
+                showToast('Summary copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy summary');
+            });
+        }
+
+        function saveToHistory() {
+            if (window.currentSummary) {
+                summaryHistory.unshift(window.currentSummary);
+                
+                // Keep only last 10 summaries
+                if (summaryHistory.length > 10) {
+                    summaryHistory = summaryHistory.slice(0, 10);
+                }
+                
+                localStorage.setItem('summaryHistory', JSON.stringify(summaryHistory));
+                updateHistoryDisplay();
+                showToast('Summary saved to history!');
+            }
+        }
+
+        function shareSummary() {
+            if (navigator.share && window.currentSummary) {
+                navigator.share({
+                    title: `AI Summary: ${window.currentSummary.title}`,
+                    text: window.currentSummary.summary,
+                    url: window.currentSummary.url
+                });
+            } else {
+                // Fallback: copy URL to clipboard
+                navigator.clipboard.writeText(window.currentSummary.url).then(() => {
+                    showToast('Article URL copied to clipboard!');
+                });
+            }
+        }
+
+        function updateHistoryDisplay() {
+            if (summaryHistory.length === 0) {
+                historySection.classList.remove('show');
+                return;
+            }
+
+            historySection.classList.add('show');
+            historyList.innerHTML = summaryHistory.map((item, index) => `
+                <div class="history-item" onclick="loadHistoryItem(${index})">
+                    <div class="history-item-title">${item.title}</div>
+                    <div class="history-item-summary">${item.summary.substring(0, 100)}...</div>
+                </div>
+            `).join('');
+        }
+
+        function loadHistoryItem(index) {
+            const item = summaryHistory[index];
+            urlInput.value = item.url;
+            displaySummary(item.summary, item.title, item.url);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function clearAllHistory() {
+            summaryHistory = [];
+            localStorage.removeItem('summaryHistory');
+            updateHistoryDisplay();
+            showToast('History cleared!');
+        }
+
+        // Multi-URL functionality
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            modeButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+
+            if (mode === 'single') {
+                singleUrlMode.style.display = 'block';
+                multipleUrlMode.style.display = 'none';
+                form.querySelector('input[required]')?.removeAttribute('required');
+                urlInput.setAttribute('required', '');
+            } else {
+                singleUrlMode.style.display = 'none';
+                multipleUrlMode.style.display = 'block';
+                urlInput.removeAttribute('required');
+            }
+            
+            hideError();
+            hideResult();
+        }
+
+        function addUrlInput() {
+            urlCount++;
+            const urlInputRow = document.createElement('div');
+            urlInputRow.className = 'url-input-row';
+            urlInputRow.innerHTML = `
+                <input 
+                    type="url" 
+                    class="form-input url-input-multi"
+                    placeholder="https://en.wikipedia.org/wiki/Article_${urlCount}"
+                    autocomplete="url"
+                >
+                <button type="button" class="btn-remove-url">×</button>
+            `;
+            
+            urlInputs.appendChild(urlInputRow);
+            
+            // Add event listeners
+            const newInput = urlInputRow.querySelector('.url-input-multi');
+            const removeBtn = urlInputRow.querySelector('.btn-remove-url');
+            
+            newInput.addEventListener('input', validateMultipleUrls);
+            newInput.addEventListener('paste', () => setTimeout(validateMultipleUrls, 100));
+            removeBtn.addEventListener('click', () => removeUrlInput(removeBtn));
+            
+            // Update remove button states
+            updateRemoveButtons();
+            validateMultipleUrls();
+        }
+
+        function removeUrlInput(button) {
+            const row = button.parentElement;
+            row.remove();
+            updateRemoveButtons();
+            validateMultipleUrls();
+        }
+
+        function updateRemoveButtons() {
+            const removeButtons = document.querySelectorAll('.btn-remove-url');
+            removeButtons.forEach(btn => {
+                btn.disabled = removeButtons.length <= 1;
+            });
+        }
+
+        function validateMultipleUrls() {
+            const inputs = document.querySelectorAll('.url-input-multi');
+            const validations = [];
+            let validCount = 0;
+            let totalWithContent = 0;
+
+            inputs.forEach((input, index) => {
+                const url = input.value.trim();
+                if (!url) return;
+                
+                totalWithContent++;
+                
+                if (isValidWikipediaUrl(url)) {
+                    validCount++;
+                    input.classList.remove('invalid');
+                    input.classList.add('valid');
+                    validations.push(`<div class="url-status valid">✓ Article ${index + 1}: Valid Wikipedia URL</div>`);
+                } else {
+                    input.classList.remove('valid');
+                    input.classList.add('invalid');
+                    validations.push(`<div class="url-status invalid">⚠️ Article ${index + 1}: Invalid Wikipedia URL</div>`);
+                }
+            });
+
+            if (totalWithContent === 0) {
+                multiUrlValidation.innerHTML = '<div class="url-status">Enter at least one Wikipedia article URL</div>';
+            } else {
+                multiUrlValidation.innerHTML = validations.join('') + 
+                    `<div style="margin-top: var(--spacing-sm); font-weight: 600; color: var(--gray-600);">
+                        ${validCount}/${totalWithContent} valid URLs
+                    </div>`;
+            }
+
+            return { validCount, totalWithContent };
+        }
+
+        function getUrlsFromInputs() {
+            if (currentMode === 'single') {
+                const url = urlInput.value.trim();
+                return url ? [url] : [];
+            } else {
+                const inputs = document.querySelectorAll('.url-input-multi');
+                const urls = [];
+                inputs.forEach(input => {
+                    const url = input.value.trim();
+                    if (url && isValidWikipediaUrl(url)) {
+                        urls.push(url);
+                    }
+                });
+                return urls;
+            }
+        }
+
+        function showLoading() {
+            loading.classList.add('show');
+            submitBtn.disabled = true;
+            submitText.textContent = 'Processing...';
+            
+            // Reset progress steps
+            document.querySelectorAll('.step-circle').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            // Reset article progress
+            articleProgress.style.display = 'none';
+            articleList.innerHTML = '';
+        }
+
+        function hideLoading() {
+            loading.classList.remove('show');
+            submitBtn.disabled = false;
+            submitText.textContent = 'Generate Summary';
+            
+            // Hide article progress
+            articleProgress.style.display = 'none';
+        }
+
+        function showResult() {
+            result.classList.add('show');
+        }
+
+        function hideResult() {
+            result.classList.remove('show');
+        }
 
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
-            error.style.display = 'block';
-            error.setAttribute('role', 'alert');
+            error.classList.add('show');
+        }
+
+        function hideError() {
+            error.classList.remove('show');
+        }
+
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
         }
     </script>
 </body>
