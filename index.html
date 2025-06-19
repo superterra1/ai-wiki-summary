@@ -476,7 +476,7 @@
         }
 
         function displayMultipleSummary(summary, titles, urls, successCount, totalCount) {
-            summaryText.textContent = summary;
+            summaryText.innerHTML = formatStructuredSummary(summary);
             
             // Calculate word count and reading time
             const words = summary.split(/\s+/).length;
@@ -489,27 +489,37 @@
             document.querySelector('.result-title').innerHTML = 
                 `📚 Combined Summary of ${successCount} Articles`;
             
-            // Add source information
+            // Add source information with article links
+            const sourceInfo = document.createElement('div');
+            sourceInfo.className = 'source-articles';
+            sourceInfo.innerHTML = `
+                <div class="source-header">
+                    <h4>📖 Source Articles (${successCount}/${totalCount})</h4>
+                </div>
+                <div class="source-links">
+                    ${titles.map((title, index) => `
+                        <a href="${urls[index]}" target="_blank" class="source-link">
+                            ${title}
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Add warning if some articles failed
             if (successCount < totalCount) {
                 const warning = document.createElement('div');
-                warning.style.cssText = `
-                    background: var(--warning-50);
-                    border: 1px solid var(--warning-200);
-                    border-radius: var(--radius-md);
-                    padding: var(--spacing-md);
-                    margin-bottom: var(--spacing-lg);
-                    color: var(--warning-700);
-                    font-size: 0.875rem;
-                `;
+                warning.className = 'processing-warning';
                 warning.innerHTML = `
                     <strong>⚠️ Partial Success:</strong> Successfully processed ${successCount} out of ${totalCount} articles. 
                     Some articles may have been skipped due to access issues.
                 `;
-                document.querySelector('.summary-content').parentNode.insertBefore(
-                    warning, 
-                    document.querySelector('.summary-content')
-                );
+                sourceInfo.appendChild(warning);
             }
+            
+            document.querySelector('.summary-content').parentNode.insertBefore(
+                sourceInfo, 
+                document.querySelector('.summary-content')
+            );
             
             // Store current summary data with multiple URLs
             window.currentSummary = { 
@@ -524,7 +534,7 @@
         }
 
         function displaySummary(summary, title, url) {
-            summaryText.textContent = summary;
+            summaryText.innerHTML = formatStructuredSummary(summary);
             
             // Calculate word count and reading time
             const words = summary.split(/\s+/).length;
@@ -533,14 +543,66 @@
             wordCount.textContent = `${words} words`;
             readingTime.textContent = `~${readingTimeMin} min read`;
             
+            // Add source information for single article
+            const sourceInfo = document.createElement('div');
+            sourceInfo.className = 'source-articles';
+            sourceInfo.innerHTML = `
+                <div class="source-header">
+                    <h4>📖 Source Article</h4>
+                </div>
+                <div class="source-links">
+                    <a href="${url}" target="_blank" class="source-link">
+                        ${title}
+                    </a>
+                </div>
+            `;
+            
+            document.querySelector('.summary-content').parentNode.insertBefore(
+                sourceInfo, 
+                document.querySelector('.summary-content')
+            );
+            
             // Store current summary data
             window.currentSummary = { summary, title, url, timestamp: Date.now() };
             
             showResult();
         }
 
+        function formatStructuredSummary(summary) {
+            // Convert markdown-style headers and formatting to HTML
+            let formattedSummary = summary
+                // Convert headers
+                .replace(/^## (.+)$/gm, '<h3 class="summary-section-title">$1</h3>')
+                // Convert bullet points
+                .replace(/^• (.+)$/gm, '<li>$1</li>')
+                // Convert paragraphs
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/^(?!<[h|l])/gm, '<p>')
+                .replace(/(?<![>])$/gm, '</p>');
+            
+            // Wrap consecutive list items in ul tags
+            formattedSummary = formattedSummary.replace(/(<li>.*?<\/li>)(?:\s*<\/p>\s*<p>\s*(<li>.*?<\/li>))*/gs, (match) => {
+                const listItems = match.match(/<li>.*?<\/li>/g) || [];
+                return `<ul class="summary-list">${listItems.join('')}</ul>`;
+            });
+            
+            // Clean up empty paragraphs and fix formatting
+            formattedSummary = formattedSummary
+                .replace(/<p><\/p>/g, '')
+                .replace(/<p>\s*<h3/g, '<h3')
+                .replace(/<\/h3>\s*<\/p>/g, '</h3>')
+                .replace(/<p>\s*<ul/g, '<ul')
+                .replace(/<\/ul>\s*<\/p>/g, '</ul>')
+                .replace(/^\s*<\/p>/, '')
+                .replace(/<p>\s*$/, '');
+            
+            return `<div class="structured-summary">${formattedSummary}</div>`;
+        }
+
         function copySummary() {
-            navigator.clipboard.writeText(summaryText.textContent).then(() => {
+            // Get the plain text version of the structured summary
+            const textContent = summaryText.textContent || window.currentSummary?.summary || '';
+            navigator.clipboard.writeText(textContent).then(() => {
                 showToast('Summary copied to clipboard!');
             }).catch(() => {
                 showToast('Failed to copy summary');
@@ -584,18 +646,39 @@
             }
 
             historySection.classList.add('show');
-            historyList.innerHTML = summaryHistory.map((item, index) => `
-                <div class="history-item" onclick="loadHistoryItem(${index})">
-                    <div class="history-item-title">${item.title}</div>
-                    <div class="history-item-summary">${item.summary.substring(0, 100)}...</div>
-                </div>
-            `).join('');
+            historyList.innerHTML = summaryHistory.map((item, index) => {
+                // Extract plain text from structured summary for preview
+                const plainTextSummary = item.summary.replace(/^##\s+.+$/gm, '').replace(/^•\s+/gm, '').replace(/\n\n+/g, ' ').trim();
+                const preview = plainTextSummary.substring(0, 100) + (plainTextSummary.length > 100 ? '...' : '');
+                
+                return `
+                    <div class="history-item" onclick="loadHistoryItem(${index})">
+                        <div class="history-item-title">${item.title}</div>
+                        <div class="history-item-summary">${preview}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function loadHistoryItem(index) {
             const item = summaryHistory[index];
-            urlInput.value = item.url;
-            displaySummary(item.summary, item.title, item.url);
+            if (item.isMultiple) {
+                // Handle multiple URLs
+                switchMode('multiple');
+                // Clear existing inputs and add the ones from history
+                urlInputs.innerHTML = '';
+                urlCount = 0;
+                item.urls.forEach(url => {
+                    addUrlInput();
+                    const inputs = document.querySelectorAll('.url-input-multi');
+                    inputs[inputs.length - 1].value = url;
+                });
+                displayMultipleSummary(item.summary, item.title.replace('Combined Summary (', '').replace(')', '').split(', '), item.urls, item.urls.length, item.urls.length);
+            } else {
+                switchMode('single');
+                urlInput.value = item.url;
+                displaySummary(item.summary, item.title, item.url);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -750,11 +833,31 @@
         }
 
         function showResult() {
+            // Clear any existing source information
+            const existingSource = document.querySelector('.source-articles');
+            if (existingSource) {
+                existingSource.remove();
+            }
+            
+            // Scroll to result
+            setTimeout(() => {
+                document.getElementById('result').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+            
             result.classList.add('show');
         }
 
         function hideResult() {
             result.classList.remove('show');
+            
+            // Also clear source information when hiding result
+            const existingSource = document.querySelector('.source-articles');
+            if (existingSource) {
+                existingSource.remove();
+            }
         }
 
         function showError(message) {

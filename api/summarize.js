@@ -100,14 +100,67 @@ async function queryHuggingFace(data, model) {
   
     for (const model of models) {
       try {
+        // Create enhanced prompts for better structured summaries
+        const isMultipleArticles = title.includes(',');
+        let promptText;
+        
+        if (isMultipleArticles) {
+          promptText = `Create a comprehensive, well-structured summary of these Wikipedia articles: ${title}. 
+
+Structure your response with these sections:
+## Overview
+Provide a brief introduction connecting all topics
+
+## Key Concepts
+List the main concepts and their definitions
+
+## Relationships & Connections
+Explain how these topics relate to each other
+
+## Important Details
+Include significant facts, dates, people, or processes
+
+## Significance
+Explain why these topics are important or relevant
+
+Content to summarize:
+${truncatedContent}
+
+Please write in clear, accessible language and organize the information logically.`;
+        } else {
+          promptText = `Create a comprehensive, well-structured summary of this Wikipedia article about ${title}.
+
+Structure your response with these sections:
+## Overview
+Brief introduction to the topic
+
+## Key Points
+Main facts, concepts, or characteristics
+
+## Background & Context
+Historical context, origins, or development
+
+## Important Details
+Significant facts, figures, people, or processes mentioned
+
+## Significance & Impact
+Why this topic is important or its relevance today
+
+Content to summarize:
+${truncatedContent}
+
+Please write in clear, accessible language with specific details and examples where relevant.`;
+        }
+        
         const result = await queryHuggingFace({
-          inputs: `Please provide a concise summary of this Wikipedia article about ${title}:\n\n${truncatedContent}`,
+          inputs: promptText,
           parameters: {
-            max_length: summaryParams.max_length,
-            min_length: summaryParams.min_length,
-            do_sample: false,
-            temperature: 0.3,
-            repetition_penalty: 1.1
+            max_length: Math.max(summaryParams.max_length * 2, 400), // Increase for structured content
+            min_length: Math.max(summaryParams.min_length * 1.5, 150),
+            do_sample: true,
+            temperature: 0.4,
+            repetition_penalty: 1.2,
+            length_penalty: 1.0
           }
         }, model);
   
@@ -117,9 +170,10 @@ async function queryHuggingFace(data, model) {
             break;
           } else if (result[0].generated_text) {
             let generatedText = result[0].generated_text;
-            const summaryStart = generatedText.toLowerCase().indexOf('summary:');
+            // Clean up the generated text
+            const summaryStart = generatedText.toLowerCase().indexOf('overview');
             if (summaryStart !== -1) {
-              generatedText = generatedText.substring(summaryStart + 8).trim();
+              generatedText = generatedText.substring(summaryStart - 3).trim();
             }
             summary = generatedText;
             break;
@@ -132,17 +186,47 @@ async function queryHuggingFace(data, model) {
     }
   
     if (!summary) {
-      throw lastError || new Error('All summarization models failed');
+      // Fallback: create a basic structured summary from the content
+      console.log('All AI models failed, creating fallback structured summary...');
+      summary = createFallbackStructuredSummary(truncatedContent, title, isMultipleArticles);
     }
   
+    // Post-process the summary for better structure
+    summary = enhanceSummaryStructure(summary, title);
+    
+    return summary;
+  }
+  
+  function createFallbackStructuredSummary(content, title, isMultiple) {
+    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 20);
+    const topSentences = sentences.slice(0, Math.min(8, sentences.length));
+    
+    if (isMultiple) {
+      return `## Overview\n${title.split(', ').join(' and ')} are interconnected topics with significant relevance.\n\n## Key Points\n${topSentences.slice(0, 4).map(s => `• ${s.trim()}.`).join('\n')}\n\n## Important Details\n${topSentences.slice(4, 8).map(s => `• ${s.trim()}.`).join('\n')}\n\n## Significance\nThese topics represent important areas of knowledge with practical applications and historical significance.`;
+    } else {
+      return `## Overview\n${title} is a significant topic with multiple important aspects.\n\n## Key Points\n${topSentences.slice(0, 3).map(s => `• ${s.trim()}.`).join('\n')}\n\n## Background & Context\n${topSentences.slice(3, 5).map(s => `• ${s.trim()}.`).join('\n')}\n\n## Important Details\n${topSentences.slice(5, 8).map(s => `• ${s.trim()}.`).join('\n')}\n\n## Significance & Impact\nThis topic has considerable importance in its field and continues to be relevant today.`;
+    }
+  }
+  
+  function enhanceSummaryStructure(summary, title) {
     // Clean up the summary
     summary = summary.replace(/^\s*Summary:?\s*/i, '').trim();
     
-    // Ensure summary ends with proper punctuation
-    if (summary && !summary.match(/[.!?]$/)) {
-      summary += '.';
+    // Ensure proper section formatting
+    summary = summary.replace(/^([A-Z][A-Za-z\s&]+)$/gm, '## $1');
+    summary = summary.replace(/^(\*\*[^*]+\*\*)/gm, '## $1');
+    
+    // Convert bullet points to proper format
+    summary = summary.replace(/^[-*•]\s*/gm, '• ');
+    
+    // Ensure paragraphs are properly separated
+    summary = summary.replace(/\n\n\n+/g, '\n\n');
+    
+    // Add title if not present
+    if (!summary.includes('##') && !summary.includes(title)) {
+      summary = `## Overview\n${summary}`;
     }
-  
+    
     return summary;
   }
   
