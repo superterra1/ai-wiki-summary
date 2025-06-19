@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Wikipedia Summarizer</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <meta name="description" content="Get intelligent and concise summaries of Wikipedia articles using AI.">
+    <meta name="keywords" content="AI, Wikipedia, Summarizer, Machine Learning, NLP, Article Summary">
+    <meta name="author" content="Your Name or Company Name">
+    <meta property="og:title" content="AI Wikipedia Summarizer">
+    <meta property="og:description" content="Get intelligent and concise summaries of Wikipedia articles using AI.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.yourwebsite.com/">
+    <meta property="og:image" content="https://www.yourwebsite.com/social-share.jpg">
     <style>
         * {
             margin: 0;
@@ -12,87 +21,101 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .container {
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 700px;
+            margin: 20px auto;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             overflow: hidden;
+            border: 1px solid #e0e0e0;
         }
 
         .header {
-            background: #2d3748;
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            font-weight: 700;
         }
 
         .header p {
-            font-size: 1.1rem;
+            font-size: 1rem;
             opacity: 0.9;
+            font-weight: 300;
         }
 
         .main {
-            padding: 40px;
+            padding: 35px;
         }
 
         .input-group {
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
         }
 
         label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 600;
-            color: #2d3748;
+            color: #333;
+            font-size: 0.95rem;
         }
 
         input[type="url"] {
             width: 100%;
-            padding: 15px;
-            border: 2px solid #e2e8f0;
+            padding: 14px;
+            border: 1px solid #dcdcdc;
             border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
+            font-size: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #fcfcfc;
         }
 
         input[type="url"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
             color: white;
             border: none;
-            padding: 15px 30px;
-            font-size: 16px;
+            padding: 14px 25px;
+            font-size: 15px;
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         }
 
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
         }
 
@@ -100,16 +123,17 @@
             display: none;
             text-align: center;
             padding: 20px;
+            color: #555;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid #e0e0e0;
+            border-top: 3px solid #4CAF50;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 12px;
         }
 
         @keyframes spin {
@@ -119,56 +143,163 @@
 
         .result {
             display: none;
-            background: #f7fafc;
+            background: #f9fafb;
             border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
         }
 
         .result h3 {
-            color: #2d3748;
-            margin-bottom: 15px;
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 1.3rem;
         }
 
         .summary {
-            line-height: 1.6;
-            color: #4a5568;
+            line-height: 1.7;
+            color: #555;
             margin-bottom: 20px;
+            font-size: 0.95rem;
         }
 
         .copy-btn {
-            background: #48bb78;
+            background: #28a745;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            transition: background-color 0.2s;
         }
 
         .copy-btn:hover {
-            background: #38a169;
+            background: #218838;
+        }
+
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 17px;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .toast.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;} 
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;} 
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
         }
 
         .error {
             display: none;
-            background: #fed7d7;
-            border: 1px solid #feb2b2;
-            color: #c53030;
+            background: #ffebee;
+            border: 1px solid #ef9a9a;
+            color: #d32f2f;
             padding: 15px;
             border-radius: 8px;
             margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            font-size: 0.95rem;
         }
 
         .example {
-            background: #edf2f7;
-            padding: 15px;
+            background: #e3f2fd;
+            padding: 12px;
             border-radius: 8px;
+            font-size: 13px;
+            color: #424242;
             margin-top: 10px;
-            font-size: 14px;
-            color: #4a5568;
+            border: 1px solid #bbdefb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+
+            .header {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header p {
+                font-size: 0.9rem;
+            }
+
+            .main {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            input[type="url"] {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .result h3 {
+                font-size: 1.1rem;
+            }
+
+            .summary {
+                font-size: 0.88rem;
+            }
+
+            .copy-btn {
+                padding: 8px 15px;
+                font-size: 12px;
+            }
+
+            .toast {
+                min-width: unset;
+                width: 90%;
+                left: 5%;
+                transform: translateX(0);
+                font-size: 14px;
+            }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -214,6 +345,8 @@
         </div>
     </div>
 
+    <div id="toast" class="toast" aria-live="polite">Summary copied to clipboard!</div>
+
     <script>
         const form = document.getElementById('summarizerForm');
         const loading = document.getElementById('loading');
@@ -222,6 +355,7 @@
         const summaryText = document.getElementById('summaryText');
         const submitBtn = document.getElementById('submitBtn');
         const copyBtn = document.getElementById('copyBtn');
+        const toast = document.getElementById('toast');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -273,10 +407,8 @@
         copyBtn.addEventListener('click', async () => {
             try {
                 await navigator.clipboard.writeText(summaryText.textContent);
-                copyBtn.textContent = 'Copied!';
-                setTimeout(() => {
-                    copyBtn.textContent = 'Copy Summary';
-                }, 2000);
+                toast.className = 'toast show';
+                setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 3000);
             } catch (err) {
                 console.error('Failed to copy text: ', err);
             }
@@ -285,6 +417,7 @@
         function showError(message) {
             document.getElementById('errorMessage').textContent = message;
             error.style.display = 'block';
+            error.setAttribute('role', 'alert');
         }
     </script>
 </body>

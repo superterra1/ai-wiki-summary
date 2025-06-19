@@ -44,33 +44,33 @@ A simple tool that uses AI to generate intelligent summaries of Wikipedia articl
 
 ## Features
 
-- ✅ Clean, modern interface
-- ✅ Fast Wikipedia content fetching
-- ✅ AI-powered summarization
-- ✅ Copy to clipboard
-- ✅ Error handling
-- ✅ Mobile responsive
+- ✅ **Clean, Modern Interface:** A user-friendly and aesthetically pleasing design.
+- ✅ **Fast Wikipedia Content Fetching:** Efficiently retrieves article content using the Wikipedia API.
+- ✅ **AI-Powered Summarization:** Leverages advanced AI (OpenAI) to generate intelligent and concise summaries.
+- ✅ **Copy to Clipboard:** Easily copy the generated summary with a single click.
+- ✅ **Error Handling:** Robust error management for invalid URLs or API issues.
+- ✅ **Mobile Responsive:** Adapts seamlessly to various screen sizes for an optimal experience on any device.
 
 ## Cost Estimation
 
-- **OpenAI API:** ~$0.01-0.03 per summary
-- **Hosting:** Free on Vercel
-- **No database costs**
+- **OpenAI API:** Approximately $0.01-0.03 per summary, depending on the article length and model used.
+- **Hosting:** Free tier on Vercel, making it cost-effective for personal projects or low-traffic applications.
+- **No Database Costs:** The application does not require a database, simplifying deployment and reducing infrastructure expenses.
 
-## Next Steps (Post-MVP)
+## Future Enhancements (Post-MVP)
 
-- Add multiple URL support
-- User accounts and saved summaries
-- Different summary styles
-- Export to PDF
-- Subscription billing
+- **Multiple URL Support:** Allow users to summarize multiple Wikipedia articles simultaneously.
+- **User Accounts and Saved Summaries:** Implement user authentication to enable saving and managing past summaries.
+- **Different Summary Styles:** Offer options for various summary lengths (e.g., brief, detailed) or perspectives.
+- **Export to PDF:** Provide functionality to export summaries as PDF documents.
+- **Subscription Billing:** Introduce a subscription model for advanced features or higher usage limits.
 
-## Tech Stack
+## Technologies Used
 
-- **Frontend:** Vanilla HTML/CSS/JS
-- **Backend:** Vercel Serverless Functions
-- **APIs:** Wikipedia API + OpenAI API
-- **Deployment:** Vercel
+- **Frontend:** Vanilla HTML, CSS, and JavaScript for a lightweight and flexible user interface.
+- **Backend:** Vercel Serverless Functions, providing a scalable and efficient environment for API handling.
+- **APIs:** Wikipedia API for content retrieval and OpenAI API for intelligent text summarization.
+- **Deployment:** Vercel, for seamless continuous integration and deployment.
 
 ## License
 
